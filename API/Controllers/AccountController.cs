@@ -52,16 +52,21 @@ namespace API.Controllers
 
             if (user == null) return Unauthorized("Invalid username");
 
-            using var hmac = new HMACSHA512(user.PasswordSalt);
-
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-
+            using var hmac = new HMACSHA512(user.PasswordSalt); //HMACSHA512 with argument in parameter 
+                                                                //initializes the object with specified
+                                                                //key according to parameter
+                                                                
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password)); //assigning to 
+                                                                                    //computedHash variable with
+                                                                                    //specified key called above
+                                                                                    //comes up to generating 
+                                                                                    //hash bytes with this specified key
             for (int i = 0; i < computedHash.Length; i++)
             {
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
             }
 
-            return new UserDto
+            return new UserDto   //returns an object instanciating right here
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user)
